@@ -1,50 +1,98 @@
 import React, { useState, useEffect } from 'react';
+import { v4 as uuid } from 'uuid'
 import './App.css';
 
-const initialFormValue = [
+
+//intializing dummy data
+
+const initialTeamateList = [
   {
-    id: 1,
+    id: uuid(),
     username: 'ed',
+    email: 'me@email.com',
   }
 ]
 
+//initializing empty strings
+
+const initialFormValues = {
+  username: '',
+  email: ''
+}
+
+
 function App() {
-  const [teamates, setTeamates] = useState(initialFormValue)
+  //sets state to empty array. dummy data is an array
+  const [teamates, setTeamates] = useState([])
 
-  const [username, setUserName] = useState('')
 
-  const [userNameValue, setUserNameValue] = useState('') //used for storing event target
+  //holds original values of initial form
+  const [formValues, setFormValues] = useState(initialFormValues)
 
+
+  //used with onChange handler. copies original and then overides with new inputs
+  const updateForm = (inputName, inputValue) => {
+    setFormValues({ ...formValues, [inputName]: inputValue })
+  }
+
+  //used with onSubmit handler
+  const submitForm = () => {
+    //new teamate receives values from updateForm that's used in onChange
+    //when submit event happens, teamate (an object) is added to the front of the list
+    const teamate = {
+      id: uuid(),
+      username: formValues.username.trim(),
+      email: formValues.email.trim()
+    }
+
+    setTeamates([teamate, ...teamates])
+    setFormValues(initialFormValues)
+  }
+
+  //on first render, only initial list appears
+  //when submitForm triggers, it adds to the list, renders again, and new item should be added to list
+  useEffect(() => {
+    setTeamates(initialTeamateList)
+  }, [])
 
   const onChange = e => {
-    setUserNameValue(e.target.value) //sets userNameValue with setUserNameValue setter function
+    const { name, value } = e.target
+    updateForm(name, value)
   }
 
   const onSubmit = e => {
     e.preventDefault()
-    setUserName(userNameValue) //sets username with setUserName setting function
+    submitForm() //sets username with setUserName setting function
   }
-
-  // useEffect(() => {
-  //   setTeamates({ ...teamates, username })
-  // })
-
-  console.log(teamates)
 
   return (
     <div className="App">
       <form onSubmit={onSubmit}>
         <input
-          value={userNameValue}
+          name='username'
+          onChange={onChange}
+          value={formValues.username}
           type='text'
           placeholder='username'
-          onChange={onChange}
         />
-      </form>
 
-      {
+        <input
+          name='email'
+          onChange={onChange}
+          value={formValues.email}
+          type='email'
+          placeholder='email'
+        />
+        <button>Submit</button>
+      </form>
+      {/* <Form onSubmit={onSubmit} onChange={onChange} formValues={formValues} /> */}
+
+      { //renders what each item in the list looks like
         teamates.map((teamate) =>
-          <li key={teamate.id}>{teamate}</li>
+          <li key={teamate.id}>
+            {teamate.username}&nbsp;
+            {teamate.email}
+          </li>
         )
       }
     </div>
