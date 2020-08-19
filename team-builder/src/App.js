@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { v4 as uuid } from 'uuid'
 import './App.css';
 
+import Form from './Form'
 
 //intializing dummy data
 
@@ -10,6 +11,7 @@ const initialTeamateList = [
     id: uuid(),
     username: 'ed',
     email: 'me@email.com',
+    role: 'student'
   }
 ]
 
@@ -17,7 +19,8 @@ const initialTeamateList = [
 
 const initialFormValues = {
   username: '',
-  email: ''
+  email: '',
+  role: ''
 }
 
 
@@ -42,7 +45,8 @@ function App() {
     const teamate = {
       id: uuid(),
       username: formValues.username.trim(),
-      email: formValues.email.trim()
+      email: formValues.email.trim(),
+      role: formValues.role,
     }
 
     setTeamates([teamate, ...teamates])
@@ -67,35 +71,24 @@ function App() {
 
   return (
     <div className="App">
-      <form onSubmit={onSubmit}>
-        <input
-          name='username'
-          onChange={onChange}
-          value={formValues.username}
-          type='text'
-          placeholder='username'
-        />
 
-        <input
-          name='email'
-          onChange={onChange}
-          value={formValues.email}
-          type='email'
-          placeholder='email'
-        />
-        <button>Submit</button>
-      </form>
-      {/* <Form onSubmit={onSubmit} onChange={onChange} formValues={formValues} /> */}
+      <Form
+        onSubmit={onSubmit}
+        onChange={onChange}
+        updateForm={updateForm}
+        formValues={formValues}
+      />
 
       { //renders what each item in the list looks like
         teamates.map((teamate) =>
-          <li key={teamate.id}>
-            {teamate.username}&nbsp;
-            {teamate.email}
-          </li>
+          <div key={teamate.id}>
+            <h2>{teamate.username}</h2>
+            <p>{teamate.email}</p>
+            <p>{teamate.role}</p>
+          </div>
         )
       }
-    </div>
+    </div >
   );
 }
 
